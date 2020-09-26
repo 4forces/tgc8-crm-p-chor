@@ -49,6 +49,22 @@ def process_add_customers():
     return redirect(url_for('show_customers'))
 
 
+@app.route('/customers/<int:customer_id>/edit')
+def show_edit_customer(customer_id):
+    # find the customer to edit
+    customer_to_edit = None
+    for customer in database:
+        if customer["id"] == customer_id:
+            customer_to_edit = customer
+    
+    # if the customer with the required id exists
+    if customer_to_edit:
+        return render_template('edit_customer.template.html',
+                               customer=customer_to_edit)
+    else:
+        return f"Customer with id {customer_id} is not found"
+
+
 
 # "magic code" -- boilerplate
 if __name__ == '__main__':
