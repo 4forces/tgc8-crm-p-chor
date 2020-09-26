@@ -18,12 +18,12 @@ def show_customers():
     return render_template('customers.template.html', all_customers=database)
 
 @app.route('/customers/add')
-def add_customer():
+def add_customers():
     return render_template('add_customer.template.html', page_title="Add Customer")
 
 
 @app.route('/customers/add', methods=["POST"])
-def process_add_customer():
+def process_add_customers():
     first_name = request.form.get('first_name')
     last_name = request.form.get('last_name')
     email = request.form.get('email')
@@ -45,6 +45,8 @@ def process_add_customer():
 
     with open('customers.json', 'w') as fp:
         json.dump(database, fp)
+
+    return redirect(url_for('show_customers'))
 
 
 
