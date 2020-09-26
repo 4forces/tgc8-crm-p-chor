@@ -19,6 +19,7 @@
         <td>{{customer.first_name}}</td>
         <td>{{customer.last_name}}</td>
         <td>{{customer.email}}</td>
+        <td><a href="{{ url_for('Show_edit_customer, customer_id=customer.id) }}" class="btn btn-primary btn-sm">Edit</a></td>
     </tr>
     {% endfor %}
 </table>

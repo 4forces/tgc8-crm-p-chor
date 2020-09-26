@@ -49,22 +49,47 @@ def process_add_customers():
     return redirect(url_for('show_customers'))
 
 
-@app.route('/customers/<int:customer_id>/edit')
+@app.route('/customers/<int:customer_id>/edit') # or customer_id = int(customer_id)
 def show_edit_customer(customer_id):
-    # find the customer to edit
+    #1. find the customer that we are supposed to edit
     customer_to_edit = None
-    for customer in database:
-        if customer["id"] == customer_id:
-            customer_to_edit = customer
-    
-    # if the customer with the required id exists
-    if customer_to_edit:
-        return render_template('edit_customer.template.html',
-                               customer=customer_to_edit)
-    else:
-        return f"Customer with id {customer_id} is not found"
+    for each_customer in database:
+        if each_customer["id"] == customer_id:
+            customer_to_edit = each_customer
+            break
 
+        if customer_to_edit:
+            return render_template('edit_customer.template.html',
+                                    customer=customer_to_edit)
+        else:
+            return f"The customer with the id of {customer_id} is not found"
 
+@app.route('/customers/<int:customer_id>/edit', methods=['POST'])
+def process_edit_customer(customer_id):
+    #1. find the customer that we are supposed to edit
+    customer_to_edit = None
+    for each_customer in database:
+        if each_customer["id"] == customer_id:
+            customer_to_edit = each_customer
+            break
+
+        if customer_to_edit:
+            customer_to_edit["first_name"] = request.form.get('first_name')
+            customer_to_edit["last_name"] = request.form.get('last_name')
+            customer_to_edit["email"] = request.form.get('email_name')
+
+            if 'can_send' in request.form:
+                print("send marketing material true")
+                customer_to_edit['send_marketing_material'] = True
+            else:
+                print("send marketing material False")
+                customer_to_edit['send_marketing_material'] = False
+
+            with open('customers.json', 'w') as fp:
+                json.dump(database, fp)
+            return redirect(url_for('show_customers'))
+        else:
+            return f"The customer {customer_id} is not found."
 
 # "magic code" -- boilerplate
 if __name__ == '__main__':
