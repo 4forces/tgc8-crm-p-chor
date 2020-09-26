@@ -94,19 +94,40 @@ def process_edit_customer(customer_id):
         customer_to_edit["last_name"] = request.form.get('last_name')
         customer_to_edit["email"] = request.form.get('email')
 
+        # checks if can_send is checked
         if 'can_send' in request.form:
             print("send marketing material true")
+            # updates the 'send_marketing_material' in customer_to_edit[data]
             customer_to_edit['send_marketing_material'] = True
+        # checks if can_send is NOT checked
         else:
             print("send marketing material False")
+            # updates the 'send_marketing_material' in customer_to_edit[data]
             customer_to_edit['send_marketing_material'] = False
 
+        # opens customers.json and writes (note: previous steps done in memory only)
         with open('customers.json', 'w') as fp:
             json.dump(database, fp)
         return redirect(url_for('show_customers'))
 
     else:
         return f"The customer {customer_id} is not found."
+
+
+@app.route('/customers/<int:customer_id>/delete')
+def show_delete_customer(customer_id):
+    customer_to_delete = None
+    for customer in database:
+        if customer['id'] == customer_id:
+            customer_to_delete = customer
+            break
+
+    if customer_to_delete:
+        return render_template('confirm_to_delete_customer.template.html',
+                               customer=customer_to_delete)
+    else:
+        return f"The customer with the id of {customer_id} is not found"
+
 
 
 # "magic code" -- boilerplate
