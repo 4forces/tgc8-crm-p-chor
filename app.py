@@ -74,7 +74,7 @@ def process_add_customers():
     else:
         can_send = False
 
-   if len(errors) == 0:
+    if len(errors) == 0:
         new_customer = {
             'id': random.randint(1000, 9999),
             'first_name': first_name,
@@ -83,20 +83,26 @@ def process_add_customers():
             'can_send': can_send,
         }
 
-    database.append(new_customer)
+        database.append(new_customer)
 
-    with open('customers.json', 'w') as fp:
-        json.dump(database, fp)
+        with open('customers.json', 'w') as fp:
+            json.dump(database, fp)
 
-    flash(
-        f"The customer with the name {new_customer['first_name']}"
-        f" {new_customer['last_name']} has been created successfully")
-    return redirect(url_for('show_customers'))
+        flash(
+            f"The customer with the name {new_customer['first_name']}"
+            f" {new_customer['last_name']} has been created successfully")
+        return redirect(url_for('show_customers'))
+    
+    else:
+        return render_template('add_customer.template.html',
+        old_values=request.form,
+        errors=errors)
 
 
 # or customer_id = int(customer_id)
 @app.route('/customers/<int:customer_id>/edit')
 def show_edit_customer(customer_id):
+
     #  -- Steps to find the customer that we are supposed to edit --
     # 1. initialise customer_to_edit = None
     customer_to_edit = None
@@ -113,7 +119,7 @@ def show_edit_customer(customer_id):
     if customer_to_edit:
         # returns the edit customer template based on customer id above
         return render_template('edit_customer.template.html',
-                               customer=customer_to_edit)
+                               customer=customer_to_edit, errors={})
     # if customer_to_edit (customer id) is not found, return customer {id} not found
     else:
         return f"The customer with the id of {customer_id} is not found"
