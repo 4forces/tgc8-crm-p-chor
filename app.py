@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 import os
 import json
 import random
@@ -8,8 +8,6 @@ database = {}
 with open('customers.json') as fp:
     database = json.load(fp)
 
-
-import flash
 
 app = Flask(__name__)
 # b stands for binary
@@ -22,15 +20,10 @@ def find_customer_by_id(customer_id):
             return customer
     return None
 
+
 def save_database():
     with open('customers.json', 'w') as fp:
         json.dump(database, fp)
-
-
-flash(
-    f"The customer with the name {new_customer[first_name]}" 
-    f" {new_customer[last_name]} has been created successfully")
-return redirect(url_for('show_customers'))
 
 
 @app.route('/')
@@ -45,7 +38,9 @@ def show_customers():
 
 @app.route('/customers/add')
 def add_customers():
-    return render_template('add_customer.template.html', page_title="Add Customer")
+    return render_template('add_customer.template.html', 
+                            page_title="Add Customer", 
+                            old_values={},errors={})
 
 
 @app.route('/customers/add', methods=["POST"])
@@ -54,27 +49,48 @@ def process_add_customers():
     last_name = request.form.get('last_name')
     email = request.form.get('email')
 
+    print(request.form)
+
+    # using dictionary to store error messages
+    errors = {}
+
+    # check if first_name is provided
+    if not first_name:
+        errors["first_name"] = "Please provide a valid first name"
+
+    if not last_name:
+        errors['last_name'] = "Please provide a valid last name"
+    
+    if not email:
+        errors['email'] = "Please provide a valid email"
+
+    if '@' not in email:
+        errors['email'] = "Your email is not properly formatted"
+
+
+    # check if 'can_send' checkbox is checked
     if 'can_send' in request.form:
         can_send = True
     else:
         can_send = False
 
-    print(request.form)
-
-    new_customer = {
-        'id': random.randint(1000, 9999),
-        'first_name': first_name,
-        'last_name': first_name,
-        'email': email,
-        'can_send': can_send,
-    }
+   if len(errors) == 0:
+        new_customer = {
+            'id': random.randint(1000, 9999),
+            'first_name': first_name,
+            'last_name': first_name,
+            'email': email,
+            'can_send': can_send,
+        }
 
     database.append(new_customer)
 
     with open('customers.json', 'w') as fp:
         json.dump(database, fp)
 
-    flash(f"The customer {customer_to_edit['first_name']}")
+    flash(
+        f"The customer with the name {new_customer['first_name']}"
+        f" {new_customer['last_name']} has been created successfully")
     return redirect(url_for('show_customers'))
 
 
@@ -88,20 +104,19 @@ def show_edit_customer(customer_id):
     for each_customer in database:
         # 3. Check if customer_id (keyed in) is equal to [json data] id
         if each_customer["id"] == customer_id:
-            #4. if true, assign each_customer to customer_to_edit
+            # 4. if true, assign each_customer to customer_to_edit
             customer_to_edit = each_customer
             break
     print('customer_to_edit:', customer_to_edit)
 
-    # checks customer_to_edit value (or checks customer id) 
+    # checks customer_to_edit value (or checks customer id)
     if customer_to_edit:
         # returns the edit customer template based on customer id above
         return render_template('edit_customer.template.html',
-                                customer=customer_to_edit)
+                               customer=customer_to_edit)
     # if customer_to_edit (customer id) is not found, return customer {id} not found
     else:
         return f"The customer with the id of {customer_id} is not found"
-
 
 
 @app.route('/customers/<int:customer_id>/edit', methods=["POST"])
@@ -112,7 +127,7 @@ def process_edit_customer(customer_id):
             customer_to_edit = each_customer
             break
 
-        # checks customer_to_edit value (or checks customer id) 
+        # checks customer_to_edit value (or checks customer id)
     if customer_to_edit:
         # obtain value from update form and update it in customer_to_edit [data]
         customer_to_edit["first_name"] = request.form.get('first_name')
@@ -152,7 +167,6 @@ def show_delete_customer(customer_id):
                                customer=customer_to_delete)
     else:
         return f"The customer with the id of {customer_id} is not found"
-
 
 
 # "magic code" -- boilerplate
