@@ -78,7 +78,7 @@ def process_add_customers():
         new_customer = {
             'id': random.randint(1000, 9999),
             'first_name': first_name,
-            'last_name': first_name,
+            'last_name': last_name,
             'email': email,
             'can_send': can_send,
         }

@@ -12,6 +12,7 @@ Customers List
             <th>First Name</th>
             <th>Last Name</th>
             <th>Email</th>
+            <th>Receive Marketing Materials</th>
         </tr>
     <thead>
     {% for customer in all_customers %}
@@ -19,6 +20,8 @@ Customers List
         <td>{{customer.first_name}}</td>
         <td>{{customer.last_name}}</td>
         <td>{{customer.email}}</td>
+        <td>{{customer.send_marketing_material}}</td>
+        <!-- <td>{% if can_send in customer or customer.send_marketing_material %} Yes {% endif %}</td> -->
         <td>
             <a href="{{ url_for('show_edit_customer', customer_id=customer.id) }}" class="btn btn-primary btn-sm">Edit</a>
             <a href="{{ url_for('show_delete_customer', customer_id=customer.id) }}" class="btn btn-danger btn-sm">Delete</a>
