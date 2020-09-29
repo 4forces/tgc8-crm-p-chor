@@ -5,19 +5,34 @@
 <form method="POST">
     <div>
         <label class="form-label">First name</label>
-        <input type="text" name="first_name" class="form-control"/>
+        <input type="text" name="first_name" class="form-control {% if 'first_name' in errors %} is-invalid {% endif %}" value="{{old_values.first_name}}"/>
+        {% if 'first_name' in errors %}
+        <div class="invalid-feedback">
+            {{errors.first_name}}
+        </div>
+        {% endif %}
     </div>
     <div>
         <label class="form-label">Last name</label>
-        <input type="text" name="last_name" class="form-control"/>
+        <input type="text" name="last_name" class="form-control {% if 'last_name' in errors %} is-invalid {% endif %}" value="{{old_values.last_name}}"/>
+        {% if 'last_name' in errors %}
+        <div class="invalid-feedback">
+            {{errors.last_name}}
+        </div>
+        {% endif %}
     </div>
     <div>
         <label class="form-label">Email</label>
-        <input type='text' name='email' class="form-control"/>
+        <input type='text' name='email' class="form-control {% if 'email' in errors %} is-invalid {% endif %}" value="{{old_values.email}}"/>
+        {% if 'email' in errors %}
+        <div class="invalid-feedback">
+            {{errors.email}}
+        </div>
+        {% endif %}    
     </div>
     <div>
         <label class="form-label">Send marketing materials?</label>
-        <input type='checkbox' name='can_send' />
+        <input type="checkbox" name="can_send" {% if "can_send" in old_values %} checked {% endif %}/>
     </div>
     <input type="submit" value="Create Customer" class="btn btn-primary"/>
 </form>

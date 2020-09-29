@@ -175,6 +175,21 @@ def show_delete_customer(customer_id):
         return f"The customer with the id of {customer_id} is not found"
 
 
+@app.route('/customers/<int:customer_id>/delete', methods=['POST'])
+def process_delete_customer(customer_id):
+    customer_to_delete = None
+    for customer in database:
+        if customer['id'] == customer_id:
+            customer_to_delete = customer
+            break
+
+    if customer_to_delete:
+        database.remove(customer_to_delete)
+        save_database()
+        return redirect(url_for('show_customers'))
+    else:
+        return f"The customer with the id of {customer_id} is not found"
+
 # "magic code" -- boilerplate
 if __name__ == '__main__':
     app.run(host=os.environ.get('IP'),
