@@ -9,6 +9,30 @@ with open('customers.json') as fp:
     database = json.load(fp)
 
 
+import flash
+
+app = Flask(__name__)
+# b stands for binary
+app.secret_key = b'laksdfoi323d'
+
+
+def find_customer_by_id(customer_id):
+    for customer in database:
+        if customer["id"] == customer_id:
+            return customer
+    return None
+
+def save_database():
+    with open('customers.json', 'w') as fp:
+        json.dump(database, fp)
+
+
+flash(
+    f"The customer with the name {new_customer[first_name]}" 
+    f" {new_customer[last_name]} has been created successfully")
+return redirect(url_for('show_customers'))
+
+
 @app.route('/')
 def home():
     return render_template('home.template.html')
@@ -50,6 +74,7 @@ def process_add_customers():
     with open('customers.json', 'w') as fp:
         json.dump(database, fp)
 
+    flash(f"The customer {customer_to_edit['first_name']}")
     return redirect(url_for('show_customers'))
 
 
